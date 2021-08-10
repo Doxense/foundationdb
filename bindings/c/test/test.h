@@ -17,14 +17,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#if defined(_WIN32)
+#include <Winsock2.h>
+#include <Process.h>
+#else
 #include <sys/time.h>
 #include <arpa/inet.h>
-
+#include <pthread.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 
 #include <inttypes.h>
 
@@ -34,6 +37,31 @@
 
 #include <foundationdb/fdb_c.h>
 #include <foundationdb/fdb_c_options.g.h>
+
+#if defined(_WIN32)
+#define THREAD_HANDLE void*
+#else
+#define THREAD_HANDLE pthread_t
+#endif
+
+#if defined(_WIN32)
+int gettimeofday(struct timeval* tp, struct timezone* tzp) {
+	static const uint64_t EPOCH = ((uint64_t)116444736000000000ULL);
+
+	SYSTEMTIME system_time;
+	FILETIME file_time;
+	uint64_t time;
+
+	GetSystemTime(&system_time);
+	SystemTimeToFileTime(&system_time, &file_time);
+	time = ((uint64_t)file_time.dwLowDateTime);
+	time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+	tp->tv_sec = (long)((time - EPOCH) / 10000000L);
+	tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
+	return 0;
+}
+#endif
 
 double getTime() {
 	static struct timeval tv;
@@ -230,15 +258,24 @@ fdb_error_t maybeLogError(fdb_error_t err, const char* context, struct ResultSet
 	return err;
 }
 
+#if defined(_WIN32)
+void runNetwork() {
+	checkError(fdb_run_network(), "run network", NULL);
+}
+#else
 void* runNetwork() {
 	checkError(fdb_run_network(), "run network", NULL);
 	return NULL;
 }
+#endif
 
-FDBDatabase* openDatabase(struct ResultSet* rs, pthread_t* netThread) {
+FDBDatabase* openDatabase(struct ResultSet* rs, THREAD_HANDLE* netThread) {
 	checkError(fdb_setup_network(), "setup network", rs);
+#if defined(_WIN32)
+	_beginthread(runNetwork, 0, NULL);
+#else
 	pthread_create(netThread, NULL, (void*)(&runNetwork), NULL);
-
+#endif
 	FDBDatabase* db;
 	checkError(fdb_create_database(NULL, &db), "create database", rs);
 

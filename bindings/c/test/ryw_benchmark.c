@@ -22,13 +22,12 @@
 #include <foundationdb/fdb_c.h>
 #include <foundationdb/fdb_c_options.g.h>
 
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <string.h>
 
-pthread_t netThread;
+THREAD_HANDLE netThread;
 
 int numKeys = 10000;
 int keySize = 16;

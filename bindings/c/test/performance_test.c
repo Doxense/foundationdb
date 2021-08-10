@@ -23,9 +23,8 @@
 #include <foundationdb/fdb_c_options.g.h>
 
 #include <stdio.h>
-#include <pthread.h>
 
-pthread_t netThread;
+THREAD_HANDLE netThread;
 
 int numKeys = 1000000;
 int keySize = 16;

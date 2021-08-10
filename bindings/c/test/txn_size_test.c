@@ -22,12 +22,11 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <pthread.h>
 
 #include <foundationdb/fdb_c.h>
 #include <foundationdb/fdb_c_options.g.h>
 
-pthread_t netThread;
+THREAD_HANDLE netThread;
 const int numKeys = 100;
 uint8_t** keys = NULL;
 
