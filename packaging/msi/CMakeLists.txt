@@ -1,6 +1,6 @@
 find_package(WIX)
 
-if(WIX_FOUND)
+if(WIX_FOUND AND NOT OPEN_FOR_IDE)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/FDBInstaller.wxs
     COMMAND ${CMAKE_COMMAND}
             -DOUT=${CMAKE_CURRENT_BINARY_DIR}/FDBInstaller.wxs

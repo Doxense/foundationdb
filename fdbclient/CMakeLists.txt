@@ -214,7 +214,7 @@ add_dependencies(fdbclient_sampling fdboptions)
 target_link_libraries(fdbclient_sampling PUBLIC fdbrpc_sampling msgpack)
 target_compile_definitions(fdbclient_sampling PRIVATE -DENABLE_SAMPLING)
 if(WIN32)
-  add_dependencies(fdbclient_sampling_actors fdbclient_actors)
+  #add_dependencies(fdbclient_sampling_actors fdbclient_actors)
 endif()
 
 if(BUILD_AZURE_BACKUP)

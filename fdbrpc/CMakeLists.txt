@@ -73,7 +73,7 @@ target_include_directories(fdbrpc_sampling PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/l
 target_link_libraries(fdbrpc_sampling PUBLIC flow_sampling)
 target_compile_definitions(fdbrpc_sampling PRIVATE -DENABLE_SAMPLING)
 if(WIN32)
-  add_dependencies(fdbrpc_sampling_actors fdbrpc_actors)
+  #add_dependencies(fdbrpc_sampling_actors fdbrpc_actors)
 endif()
 
 if(COMPILE_EIO)
